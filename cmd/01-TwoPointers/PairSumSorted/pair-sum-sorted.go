@@ -12,10 +12,6 @@ const (
 	ColorYellow = "\033[33m"
 )
 
-func YourSolution(input Input) Output {
-	return Output{}
-}
-
 func main() {
 
 	log.SetFlags(0)
@@ -131,7 +127,6 @@ func verifySolution(outputs []OutputErr, expectedOutputs []Output) {
 
 }
 
-// TODO: make this take as input an Hashable element to create the key of the map
 func toSortedMap(ins [][2]int) map[[2]int]struct{} {
 	out := make(map[[2]int]struct{}, len(ins))
 	for _, in := range ins {

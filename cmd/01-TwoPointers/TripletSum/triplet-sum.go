@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"slices"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -13,28 +14,22 @@ const (
 	ColorYellow = "\033[33m"
 )
 
-func YourSolution(input Input) Output {
-	return Output{}
-}
-
 func main() {
 	var inputs []Input = []Input{
-		{IntAscendingSortedArray: []int{}, Target: 0},
-		{IntAscendingSortedArray: []int{1}, Target: 0},
-		{IntAscendingSortedArray: []int{2, 3}, Target: 0},
-		{IntAscendingSortedArray: []int{2, 4}, Target: 0},
-		{IntAscendingSortedArray: []int{2, 3, 4}, Target: 0},
-		{IntAscendingSortedArray: []int{-1, 2, 3}, Target: 0},
-		{IntAscendingSortedArray: []int{-3, -2, -1}, Target: 0},
+		{IntAscendingSortedArray: []int{}},
+		{IntAscendingSortedArray: []int{0}},
+		{IntAscendingSortedArray: []int{1, -1}},
+		{IntAscendingSortedArray: []int{0, 0, 0}},
+		{IntAscendingSortedArray: []int{1, 0, 1}},
+		{IntAscendingSortedArray: []int{0, 0, 1, -1, 1, -1}},
 	}
 	var expectedOutputs []Output = []Output{
-		{Indexes: [][2]int{}},
-		{Indexes: [][2]int{}},
-		{Indexes: [][2]int{{0, 1}}},
-		{Indexes: [][2]int{}},
-		{Indexes: [][2]int{{1, 2}, {0, 2}}},
-		{Indexes: [][2]int{{0, 2}}},
-		{Indexes: [][2]int{{0, 1}}},
+		{Indexes: [][3]int{}},
+		{Indexes: [][3]int{}},
+		{Indexes: [][3]int{}},
+		{Indexes: [][3]int{{0, 0, 0}}},
+		{Indexes: [][3]int{}},
+		{Indexes: [][3]int{{-1, 0, 1}}},
 	}
 	if len(inputs) != len(expectedOutputs) {
 		log.Fatalf("error with the test setup: len(input) != len(expectedOutput)")
@@ -55,11 +50,10 @@ func main() {
 
 type Input struct {
 	IntAscendingSortedArray []int
-	Target                  int
 }
 
 type Output struct {
-	Indexes [][2]int
+	Indexes [][3]int
 }
 
 type OutputErr struct {
@@ -132,14 +126,11 @@ func verifySolution(outputs []OutputErr, expectedOutputs []Output) {
 
 }
 
-// TODO: make this take as input an Hashable element to create the key of the map
-func toSortedMap(ins [][2]int) map[[2]int]struct{} {
-	out := make(map[[2]int]struct{}, len(ins))
+func toSortedMap(ins [][3]int) map[[3]int]struct{} {
+	out := make(map[[3]int]struct{}, len(ins))
 	for _, in := range ins {
-		hash := [2]int{in[1], in[0]}
-		if in[1] > in[0] {
-			hash = [2]int{in[0], in[1]}
-		}
+		slices.Sort(in[:])
+		hash := in
 		out[hash] = struct{}{}
 	}
 	return out
