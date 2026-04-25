@@ -6,6 +6,13 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+const (
+	ColorReset  = "\033[0m"
+	ColorRed    = "\033[31m"
+	ColorGreen  = "\033[32m"
+	ColorYellow = "\033[33m"
+)
+
 func YourSolution(input Input) Output {
 	return Output{}
 }
@@ -97,7 +104,7 @@ func verifySolution(outputs []OutputErr, expectedOutputs []Output) {
 		default:
 			outputMap := toSortedMap(output.Output.Indexes)
 			expectedOutputMap := toSortedMap(expectedOutputs[i].Indexes)
-			for key, _ := range expectedOutputMap {
+			for key := range expectedOutputMap {
 				_, found := outputMap[key]
 				if !found {
 					testedCases[i] = fmt.Errorf("expected output ({%d,%d}) not found in the actual output", key[0], key[1])
@@ -105,21 +112,20 @@ func verifySolution(outputs []OutputErr, expectedOutputs []Output) {
 				}
 			}
 			workingCases++
-
 		}
 	}
 
 	if workingCases == numberOfCases {
-		log.Infof("All of %d test cases passed!")
+		log.Infof("%s●%s All of %d test cases passed!", ColorGreen, ColorReset, numberOfCases)
 		return
 	}
 
-	log.Warnf("Some of the %d test did not pass:")
+	log.Warnf("%s●%s Some of the %d test did not pass:", ColorYellow, ColorReset, numberOfCases)
 	for i, testedCase := range testedCases {
 		if testedCase == nil {
-			log.Infof("Test %d passed!", i)
+			log.Warnf("%s●%s Test %d passed!", ColorGreen, ColorReset, i)
 		} else {
-			log.Infof("Test %d did not pass: %30w", i, testedCase.Error())
+			log.Warnf("%s●%s Test %d did not pass: %30s", ColorRed, ColorReset, i, testedCase.Error())
 		}
 
 	}
