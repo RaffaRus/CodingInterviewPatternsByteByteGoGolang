@@ -2,9 +2,8 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"slices"
-
-	log "github.com/sirupsen/logrus"
 )
 
 const (
@@ -15,6 +14,8 @@ const (
 )
 
 func main() {
+
+	log.SetFlags(0)
 	var inputs []Input = []Input{
 		{IntAscendingSortedArray: []int{}},
 		{IntAscendingSortedArray: []int{0}},
@@ -44,8 +45,6 @@ func main() {
 		}
 	}
 	verifySolution(outputs, expectedOutputs)
-
-	fmt.Println("Apparently your solution worked, well done!")
 }
 
 type Input struct {
@@ -110,16 +109,16 @@ func verifySolution(outputs []OutputErr, expectedOutputs []Output) {
 	}
 
 	if workingCases == numberOfCases {
-		log.Infof("%s●%s All of %d test cases passed!", ColorGreen, ColorReset, numberOfCases)
+		log.Printf("%s●%s All of %d test cases passed!", ColorGreen, ColorReset, numberOfCases)
 		return
 	}
 
-	log.Warnf("%s●%s Some of the %d test did not pass:", ColorYellow, ColorReset, numberOfCases)
+	log.Printf("%s●%s Some of the %d test did not pass:", ColorYellow, ColorReset, numberOfCases)
 	for i, testedCase := range testedCases {
 		if testedCase == nil {
-			log.Warnf("%s●%s Test %d passed!", ColorGreen, ColorReset, i)
+			log.Printf("%s●%s Test %d passed!", ColorGreen, ColorReset, i)
 		} else {
-			log.Warnf("%s●%s Test %d did not pass: %30s", ColorRed, ColorReset, i, testedCase.Error())
+			log.Printf("%s●%s Test %d did not pass: %30s", ColorRed, ColorReset, i, testedCase.Error())
 		}
 
 	}
