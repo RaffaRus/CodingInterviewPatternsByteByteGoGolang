@@ -17,20 +17,20 @@ func main() {
 
 	log.SetFlags(0)
 	var inputs []Input = []Input{
-		{IntAscendingSortedArray: []int{}},
-		{IntAscendingSortedArray: []int{0}},
-		{IntAscendingSortedArray: []int{1, -1}},
-		{IntAscendingSortedArray: []int{0, 0, 0}},
-		{IntAscendingSortedArray: []int{1, 0, 1}},
-		{IntAscendingSortedArray: []int{0, 0, 1, -1, 1, -1}},
+		{IntArray: []int{}},
+		{IntArray: []int{0}},
+		{IntArray: []int{1, -1}},
+		{IntArray: []int{0, 0, 0}},
+		{IntArray: []int{1, 0, 1}},
+		{IntArray: []int{0, 0, 1, -1, 1, -1}},
 	}
 	var expectedOutputs []Output = []Output{
-		{Indexes: [][3]int{}},
-		{Indexes: [][3]int{}},
-		{Indexes: [][3]int{}},
-		{Indexes: [][3]int{{0, 0, 0}}},
-		{Indexes: [][3]int{}},
-		{Indexes: [][3]int{{-1, 0, 1}}},
+		{Triplets: [][3]int{}},
+		{Triplets: [][3]int{}},
+		{Triplets: [][3]int{}},
+		{Triplets: [][3]int{{0, 0, 0}}},
+		{Triplets: [][3]int{}},
+		{Triplets: [][3]int{{-1, 0, 1}}},
 	}
 	if len(inputs) != len(expectedOutputs) {
 		log.Fatalf("error with the test setup: len(input) != len(expectedOutput)")
@@ -48,11 +48,11 @@ func main() {
 }
 
 type Input struct {
-	IntAscendingSortedArray []int
+	IntArray []int
 }
 
 type Output struct {
-	Indexes [][3]int
+	Triplets [][3]int
 }
 
 type OutputErr struct {
@@ -79,28 +79,32 @@ func verifySolution(outputs []OutputErr, expectedOutputs []Output) {
 	workingCases := 0
 	testedCases := make([]error, numberOfCases)
 	for i, output := range outputs {
-		if len(output.Output.Indexes) != len(expectedOutputs[i].Indexes) {
-			testedCases[i] = fmt.Errorf("expected output length != output length")
+		if len(output.Output.Triplets) != len(expectedOutputs[i].Triplets) {
+			testedCases[i] = fmt.Errorf("expected output length(%d) != output length (%d)", len(output.Output.Triplets), len(expectedOutputs[i].Triplets))
 			continue
 		}
-		switch len(output.Output.Indexes) {
+		switch len(output.Output.Triplets) {
 		case 0:
 			workingCases++
 			continue
 		case 1:
-			if output.Output.Indexes[0] != expectedOutputs[i].Indexes[0] {
+			if output.Output.Triplets[0] != expectedOutputs[i].Triplets[0] {
 				testedCases[i] = fmt.Errorf("expected output != output")
 				continue
 			}
 			workingCases++
 			continue
 		default:
-			outputMap := toSortedMap(output.Output.Indexes)
-			expectedOutputMap := toSortedMap(expectedOutputs[i].Indexes)
+			outputMap := toSortedMap(output.Output.Triplets)
+			if len(output.Output.Triplets) != len(outputMap) {
+				testedCases[i] = fmt.Errorf("output contains a duplicate triplet")
+				continue
+			}
+			expectedOutputMap := toSortedMap(expectedOutputs[i].Triplets)
 			for key := range expectedOutputMap {
 				_, found := outputMap[key]
 				if !found {
-					testedCases[i] = fmt.Errorf("expected output ({%d,%d}) not found in the actual output", key[0], key[1])
+					testedCases[i] = fmt.Errorf("expected output ({%d,%d,%d}) not found in the actual output", key[0], key[1], key[2])
 					continue
 				}
 			}
@@ -116,9 +120,9 @@ func verifySolution(outputs []OutputErr, expectedOutputs []Output) {
 	log.Printf("%s●%s Some of the %d test did not pass:", ColorYellow, ColorReset, numberOfCases)
 	for i, testedCase := range testedCases {
 		if testedCase == nil {
-			log.Printf("%s●%s Test %d passed!", ColorGreen, ColorReset, i)
+			log.Printf("%s●%s Test %d passed!", ColorGreen, ColorReset, i+1)
 		} else {
-			log.Printf("%s●%s Test %d did not pass: %30s", ColorRed, ColorReset, i, testedCase.Error())
+			log.Printf("%s●%s Test %d did not pass: %30s", ColorRed, ColorReset, i+1, testedCase.Error())
 		}
 
 	}
